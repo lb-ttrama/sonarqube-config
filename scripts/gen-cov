@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo=${1:-}
+
+case $repo in
+engagement-api)
+   npm run test:cov;
+   ;;
+backend-api)
+   npm run test -- --coverage;
+   ;;
+*)
+   echo "No coverage command configured for ${repo}" && exit 1
+   ;;
+esac
+

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+pullrequest_id=${1:-}
+gh pr checkout "${pullrequest_id}"
+read prid prbase prbranch repo < <(echo $(gh pr status --json number,baseRefName,headRefName,headRepository --jq '.currentBranch | .number, .baseRefName, .headRefName, .headRepository.name'))
+
+gen-cov "${repo}";
+sonar-scanner \
+  -Dsonar.sources=. \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.pullrequest.branch="${prbranch}" \
+  -Dsonar.pullrequest.key="${prid}" \
+  -Dsonar.pullrequest.base="${prbase}"\
+  -Dsonar.login="${SQ_LOGIN_TOKEN}"

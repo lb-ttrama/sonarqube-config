@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+read reponame repobase < <(echo $(gh repo view --json defaultBranchRef,name -q '.name, .defaultBranchRef.name'))
+git checkout "${repobase}"
+gen-cov "${reponame}";
+
+sonar-scanner \
+  -Dsonar.sources=. \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.branch.name="${repobase}" \
+  -Dsonar.login="${SQ_LOGIN_TOKEN}"
