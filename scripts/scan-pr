@@ -5,8 +5,8 @@ pullrequest_id=${1:-}
 gh pr checkout "${pullrequest_id}"
 read prid prbase prbranch repo < <(echo $(gh pr status --json number,baseRefName,headRefName,headRepository --jq '.currentBranch | .number, .baseRefName, .headRefName, .headRepository.name'))
 
-# gen-cov "${repo}" || true # some tests might fail - we still want to run the scanner
-echo sonar-scanner \
+gen-cov "${repo}" || true # some tests might fail - we still want to run the scanner
+sonar-scanner \
   -Dsonar.sources=. \
   -Dsonar.host.url=http://localhost:9000 \
   -Dsonar.pullrequest.branch="${prbranch}" \
